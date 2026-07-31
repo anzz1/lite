@@ -87,7 +87,12 @@ function core.init()
   for i = 2, #ARGS do
     local info = system.get_file_info(ARGS[i]) or {}
     if info.type == "file" then
-      table.insert(files, system.absolute_path(ARGS[i]))
+      local abs_path = system.absolute_path(ARGS[i])
+      table.insert(files, abs_path)
+      local dir = abs_path:match("^(.*)[/\\]")
+      if dir then
+        project_dir = dir
+      end
     elseif info.type == "dir" then
       project_dir = ARGS[i]
     end
