@@ -1,4 +1,5 @@
 local core = require "core"
+local command = require "core.command"
 local style = require "core.style"
 local View = require "core.view"
 
@@ -69,6 +70,25 @@ function LogView:draw()
     y = y + style.padding.y
   end
 end
+
+
+command.add(LogView, {
+  ["log:copy-all"] = function()
+    local t = {}
+    for _, item in ipairs(core.log_items) do
+      table.insert(t, item.text)
+      if (item.info) then
+        table.insert(t, item.info)
+      end
+    end
+    system.set_clipboard(table.concat(t, "\n"))
+    core.log("Copied log to clipboard")
+  end,
+
+  ["log:clear"] = function()
+    core.log_items = {}
+  end
+})
 
 
 return LogView
