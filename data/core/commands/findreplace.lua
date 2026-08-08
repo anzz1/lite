@@ -15,7 +15,7 @@ end
 local previous_finds
 local last_doc
 local last_fn, last_text
-
+local submit_fn
 
 local function push_previous_find(doc, sel)
   if last_doc ~= doc then
@@ -37,7 +37,7 @@ local function find(label, search_fn)
 
   core.command_view:set_text(text, true)
 
-  core.command_view:enter(label, function(text)
+  submit_fn = function(text)
     if found then
       last_fn, last_text = search_fn, text
       previous_finds = {}
@@ -47,8 +47,9 @@ local function find(label, search_fn)
       dv.doc:set_selection(table.unpack(sel))
       dv:scroll_to_make_visible(sel[1], sel[2])
     end
+  end
 
-  end, function(text)
+  core.command_view:enter(label, submit_fn, function(text)
     local ok, line1, col1, line2, col2 = pcall(search_fn, dv.doc, sel[1], sel[2], text)
     if ok and line1 and text ~= "" then
       dv.doc:set_selection(line2, col2, line1, col1)
@@ -115,6 +116,9 @@ command.add("core.docview", {
   end,
 
   ["find-replace:repeat-find"] = function()
+    if core.command_view.state.submit == submit_fn then
+      core.command_view:submit()
+    end
     if not last_fn then
       core.error("No find to continue from")
     else
