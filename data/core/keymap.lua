@@ -120,7 +120,8 @@ keymap.add {
   ["shift+f3"] = "find-replace:previous-find",
   ["ctrl+g"] = "doc:go-to-line",
   ["ctrl+s"] = "doc:save",
-  ["ctrl+shift+s"] = "doc:save-as",
+  ["ctrl+shift+s"] = "doc:save-all",
+  ["alt+shift+s"] = "doc:save-as",
 
   ["ctrl+z"] = "doc:undo",
   ["ctrl+y"] = "doc:redo",

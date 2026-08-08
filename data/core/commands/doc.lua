@@ -301,6 +301,19 @@ local commands = {
     end
   end,
 
+  ["doc:save-all"] = function()
+    local count = 0
+    for _, doc in ipairs(core.docs) do
+      if doc:is_dirty() and doc.filename then
+        doc:save()
+        count = count + 1
+      end
+    end
+    if count > 1 then
+      core.log("Saved %d files", count)
+    end
+  end,
+
   ["doc:rename"] = function()
     local old_filename = doc().filename
     if not old_filename then

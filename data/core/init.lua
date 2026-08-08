@@ -166,12 +166,16 @@ function core.quit(force)
   if dirty_count > 0 then
     local text
     if dirty_count == 1 then
-      text = string.format("\"%s\" has unsaved changes. Quit anyway?", dirty_name)
+      text = string.format("Save changes to %s?", dirty_name:match("[^/%\\]*$"))
     else
-      text = string.format("%d docs have unsaved changes. Quit anyway?", dirty_count)
+      text = string.format("Save changes to %d documents?", dirty_count)
     end
-    local confirm = system.show_confirm_dialog("Unsaved Changes", text)
-    if not confirm then return end
+    local yesnocancel = system.show_yesnocancel_dialog("lite", text)
+    if yesnocancel == 1 then
+      command.perform("doc:save-all")
+    elseif yesnocancel ~= 2 then
+      return
+    end
   end
   core.quit(true)
 end
