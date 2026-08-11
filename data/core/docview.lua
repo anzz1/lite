@@ -64,22 +64,14 @@ end
 function DocView:try_close(do_close)
   if self.doc:is_dirty()
   and #core.get_views_referencing_doc(self.doc) == 1 then
-    core.command_view:enter("Unsaved Changes; Confirm Close", function(_, item)
-      if item.text:match("^[cC]") then
-        do_close()
-      elseif item.text:match("^[sS]") then
-        self.doc:save()
-        do_close()
-      end
-    end, function(text)
-      local items = {}
-      if not text:find("^[^cC]") then table.insert(items, "Close Without Saving") end
-      if not text:find("^[^sS]") then table.insert(items, "Save And Close") end
-      return items
-    end)
-  else
-    do_close()
+    local yesnocancel = system.show_yesnocancel_dialog("lite", string.format("Save changes to %s?", self.doc:get_name():match("[^/%\\]*$")))
+    if yesnocancel == 1 then
+      self.doc:save()
+    elseif yesnocancel ~= 2 then
+      return
+    end
   end
+  do_close()
 end
 
 
