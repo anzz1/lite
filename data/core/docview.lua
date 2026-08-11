@@ -386,4 +386,21 @@ function DocView:draw()
 end
 
 
+function DocView:reload()
+  local line, col = self.doc:get_selection()
+  local name = self.doc:get_name()
+  if self.doc:is_dirty() then
+    local yesnocancel = system.show_yesnocancel_dialog("lite", string.format("Save changes to %s?", name:match("[^/%\\]*$")))
+    if yesnocancel == 1 then
+      self.doc:save()
+    elseif yesnocancel ~= 2 then
+      return
+    end
+  end
+  self.doc:load(self.doc.filename)
+  self.doc:set_selection(line, col)
+  core.log("Reloaded \"%s\"", name)
+end
+
+
 return DocView

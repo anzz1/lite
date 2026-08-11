@@ -152,6 +152,7 @@ keymap.add {
   ["ctrl+down"] = "doc:move-lines-down",
   ["ctrl+shift+d"] = "doc:duplicate-lines",
   ["ctrl+shift+k"] = "doc:delete-lines",
+  ["f5"] = "doc:reload",
 
   ["left"] = "doc:move-to-previous-char",
   ["right"] = "doc:move-to-next-char",

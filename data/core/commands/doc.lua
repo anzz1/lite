@@ -329,6 +329,10 @@ local commands = {
       end
     end, common.path_suggest)
   end,
+
+  ["doc:reload"] = function()
+    dv():reload()
+  end,
 }
 
 
