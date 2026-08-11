@@ -2,6 +2,7 @@ local core = require "core"
 local config = require "core.config"
 local Doc = require "core.doc"
 
+config.autoreload_ask = true
 
 local times = setmetatable({}, { __mode = "k" })
 
@@ -33,7 +34,15 @@ core.add_thread(function()
     for _, doc in ipairs(core.docs) do
       local info = system.get_file_info(doc.filename or "")
       if info and times[doc] ~= info.modified then
-        reload_doc(doc)
+        if config.autoreload_ask and doc:is_dirty() then
+          if system.show_confirm_dialog("lite", string.format("File changed outside the editor.\nReload %s?", doc:get_name():match("[^/%\\]*$"))) then
+            reload_doc(doc)
+          else
+            times[doc] = info.modified
+          end
+        else
+          reload_doc(doc)
+        end
       end
       coroutine.yield()
     end
