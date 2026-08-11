@@ -8,10 +8,26 @@
 #include "api.h"
 #include "rencache.h"
 #ifdef _WIN32
+  #ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+  #endif
   #include <windows.h>
+  #include <SDL2/SDL_syswm.h>
 #endif
 
 extern SDL_Window *window;
+
+
+#ifdef _WIN32
+static HWND get_hwnd() {
+  SDL_SysWMinfo wmInfo;
+  SDL_VERSION(&wmInfo.version);
+  if (SDL_GetWindowWMInfo(window, &wmInfo)) {
+    return wmInfo.info.win.window;
+  }
+  return NULL;
+}
+#endif
 
 
 static const char* button_name(int button) {
@@ -203,7 +219,7 @@ static int f_show_confirm_dialog(lua_State *L) {
   const char *msg = luaL_checkstring(L, 2);
 
 #ifdef _WIN32
-  int id = MessageBox(0, msg, title, MB_YESNO | MB_ICONWARNING);
+  int id = MessageBoxA(get_hwnd(), msg, title, MB_YESNO | MB_ICONWARNING);
   lua_pushboolean(L, id == IDYES);
 
 #else
@@ -229,7 +245,7 @@ static int f_show_yesnocancel_dialog(lua_State *L) {
   const char *msg = luaL_checkstring(L, 2);
 
 #ifdef _WIN32
-  int id = MessageBox(0, msg, title, MB_YESNOCANCEL | MB_ICONWARNING);
+  int id = MessageBoxA(get_hwnd(), msg, title, MB_YESNOCANCEL | MB_ICONWARNING);
   switch (id) {
     case IDYES    : lua_pushnumber(L, 1); break;
     case IDNO     : lua_pushnumber(L, 2); break;
