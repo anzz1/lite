@@ -202,7 +202,7 @@ static int f_show_confirm_dialog(lua_State *L) {
   const char *title = luaL_checkstring(L, 1);
   const char *msg = luaL_checkstring(L, 2);
 
-#if _WIN32
+#ifdef _WIN32
   int id = MessageBox(0, msg, title, MB_YESNO | MB_ICONWARNING);
   lua_pushboolean(L, id == IDYES);
 
@@ -228,7 +228,7 @@ static int f_show_yesnocancel_dialog(lua_State *L) {
   const char *title = luaL_checkstring(L, 1);
   const char *msg = luaL_checkstring(L, 2);
 
-#if _WIN32
+#ifdef _WIN32
   int id = MessageBox(0, msg, title, MB_YESNOCANCEL | MB_ICONWARNING);
   switch (id) {
     case IDYES    : lua_pushnumber(L, 1); break;
@@ -372,7 +372,7 @@ static int f_exec(lua_State *L) {
   const char *cmd = luaL_checklstring(L, 1, &len);
   char *buf = malloc(len + 32);
   if (!buf) { luaL_error(L, "buffer allocation failed"); }
-#if _WIN32
+#ifdef _WIN32
   sprintf(buf, "cmd /c \"%s\"", cmd);
   WinExec(buf, SW_HIDE);
 #else

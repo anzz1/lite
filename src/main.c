@@ -18,7 +18,7 @@ SDL_Window *window;
 static double get_scale(void) {
   float dpi;
   SDL_GetDisplayDPI(0, NULL, &dpi, NULL);
-#if _WIN32
+#ifdef _WIN32
   return dpi / 96.0;
 #else
   return 1.0;
@@ -27,7 +27,7 @@ static double get_scale(void) {
 
 
 static void get_exe_filename(char *buf, int sz) {
-#if _WIN32
+#ifdef _WIN32
   int len = GetModuleFileName(NULL, buf, sz - 1);
   buf[len] = '\0';
 #elif __linux__
