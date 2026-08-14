@@ -82,7 +82,9 @@ function core.init()
   CommandView = require "core.commandview"
   Doc = require "core.doc"
 
-  local project_dir = EXEDIR
+  local project_dir = EXEDIR .. PATHSEP .. "work"
+  system.mkdir(project_dir)
+
   local files = {}
   for i = 2, #ARGS do
     local info = system.get_file_info(ARGS[i]) or {}
@@ -121,8 +123,12 @@ function core.init()
   local got_user_error = not core.try(require, "user")
   local got_project_error = not core.load_project_module()
 
-  for _, filename in ipairs(files) do
-    core.root_view:open_doc(core.open_doc(filename))
+  if #files > 0 then
+    for _, filename in ipairs(files) do
+      core.root_view:open_doc(core.open_doc(filename))
+    end
+  else
+    core.root_view:open_doc(core.open_doc())
   end
 
   if got_plugin_error or got_user_error or got_project_error then
